@@ -1,9 +1,15 @@
-{% if workers_list %}
-    <ul>
-    {% for worker in workers_list %}
-        <li><a href="/timetable/{{ worker.id }}/">{{ worker.first_name }} {{ worker.last_name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No workers are available.</p>
-{% endif %}
+{% extends 'timetable/base.html' %}
+
+{% block title %} Расписание {% endblock %}
+
+{% block content %}
+    {% if workers_list %}
+        <ul>
+        {% for worker in workers_list %}
+            <li><a href="/timetable/{{ worker.id }}/">{{ worker.first_name }} {{ worker.last_name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No workers are available.</p>
+    {% endif %}
+{% endblock %}

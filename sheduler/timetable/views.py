@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.views import generic
 
 # Create your views here.
 from django.template import loader
@@ -7,14 +8,14 @@ from django.template import loader
 from .models import Worker
 
 
-def index(request):
-    workers = Worker.objects.all()
-    template = loader.get_template('timetable/index.html')
-    context = {
-        'workers_list': workers,
-    }
-    return HttpResponse(template.render(context, request))
+class IndexView(generic.TemplateView):
+    template_name = "timetable/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['workers_list'] = Worker.objects.all()
+        return context
 
 
-def worker(request, user_id):
-    return HttpResponse("Here detailed user view")
+class WorkerView(generic.DetailView):
+    model = Worker

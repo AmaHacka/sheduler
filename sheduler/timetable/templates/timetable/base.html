@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'timetable/style.css'%}">
+    <link rel="stylesheet" href="{% static 'timetable/bootstrap4/css/bootstrap.css'%}">
+    <title>{% block title %} {% endblock %}</title>
+</head>
+
+<body>
+{% block content %} {% endblock %}
+</body>
+
+<script src="{% static 'timetable/bootstrap4/js/jquery3.2.1.js' %}"></script>
+<script src="{% static 'timetable/bootstrap4/js/bootstrap.js' %}"></script>
+</html>
