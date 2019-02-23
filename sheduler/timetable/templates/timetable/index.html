@@ -4,10 +4,12 @@
 
 {% block content %}
     {% if workers_list %}
-        <ul>
-        {% for worker in workers_list %}
-            <li><a href="/{{ worker.id }}/">{{ worker.first_name }} {{ worker.last_name }}</a></li>
-        {% endfor %}
+        <ul class="list-group list-group-flush">
+            {% for worker in workers_list %}
+                <li class="list-group-item">
+                    <a href="/{{ worker.id }}/">{{ worker.first_name }} {{ worker.last_name }}</a>
+                </li>
+            {% endfor %}
         </ul>
     {% else %}
         <p>No workers are available.</p>
