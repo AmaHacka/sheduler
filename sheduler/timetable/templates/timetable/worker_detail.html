@@ -2,5 +2,12 @@
 {% block title %} Подробнее {% endblock %}
 
 {% block content %}
-    Here will be worker description!
+    Here will be full {{ object.first_name }} description!
+    <ul>
+        {% for day in object.day_set.all %}
+            <li>{{ day.get_weekday_display }}</li>
+        {% endfor %}
+    </ul>
+
+
 {% endblock %}
