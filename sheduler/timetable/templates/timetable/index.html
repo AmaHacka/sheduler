@@ -6,7 +6,7 @@
     {% if workers_list %}
         <ul>
         {% for worker in workers_list %}
-            <li><a href="/timetable/{{ worker.id }}/">{{ worker.first_name }} {{ worker.last_name }}</a></li>
+            <li><a href="/{{ worker.id }}/">{{ worker.first_name }} {{ worker.last_name }}</a></li>
         {% endfor %}
         </ul>
     {% else %}
