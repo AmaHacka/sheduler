@@ -7,7 +7,7 @@
         <ul class="list-group list-group-flush">
             {% for worker in workers_list %}
                 <li class="list-group-item">
-                    <a href="/{{ worker.id }}/">{{ worker.first_name }} {{ worker.last_name }}</a>
+                    <a href="/{{ worker.id }}/">{{ worker.last_name }} {{ worker.first_name }}</a>
                 </li>
             {% endfor %}
         </ul>

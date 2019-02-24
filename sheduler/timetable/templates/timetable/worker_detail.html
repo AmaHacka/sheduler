@@ -2,12 +2,31 @@
 {% block title %} Подробнее {% endblock %}
 
 {% block content %}
-    Here will be full {{ object.first_name }} description!
-    <ul>
-        {% for day in object.day_set.all %}
-            <li>{{ day.get_weekday_display }}</li>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th class="text-center" scope="col">{{ object.last_name }}</th>
+            {% for day in object.day_set.all %}
+                <th scope="col" class="text-center">{{ day.get_weekday_display }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for name, hour in table.items %}
+            <tr>
+                <th class="text-center" scope="row">{{ name }}</th>
+                {% for day in  hour %}
+                    <td class="text-center">
+                        {% if day %}
+                            +
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
         {% endfor %}
-    </ul>
+
+        </tbody>
+    </table>
 
 
 {% endblock %}

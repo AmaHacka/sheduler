@@ -6,7 +6,7 @@ from .models import Worker, Day
 
 class DayInline(admin.TabularInline):
     model = Day
-    extra = 7
+    extra = 5
 
 
 class WorkerAdmin(admin.ModelAdmin):
