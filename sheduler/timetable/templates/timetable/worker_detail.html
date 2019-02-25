@@ -1,11 +1,11 @@
 {% extends "timetable/base.html" %}
-{% block title %} Подробнее {% endblock %}
+{% block title %} {{ object.last_name }} {{ object.first_name }}{% endblock %}
 
 {% block content %}
     <table class="table">
         <thead class="thead-dark">
         <tr>
-            <th class="text-center" scope="col">{{ object.last_name }}</th>
+            <th class="text-center" scope="col"> </th>
             {% for day in object.day_set.all %}
                 <th scope="col" class="text-center">{{ day.get_weekday_display }}</th>
             {% endfor %}

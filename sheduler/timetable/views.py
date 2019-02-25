@@ -1,11 +1,7 @@
-from django.shortcuts import render
-from django.http import HttpResponse
 from django.views import generic
 
-# Create your views here.
-from django.template import loader
-
 from .models import Worker, Day
+from django.db.models import Q
 
 
 class IndexView(generic.TemplateView):
@@ -13,7 +9,8 @@ class IndexView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['workers_list'] = Worker.objects.order_by("last_name")
+        q = self.request.GET.get('q', '')
+        context['workers_list'] = Worker.objects.filter(Q(first_name__icontains=q) | Q(last_name__icontains=q))
         return context
 
 
@@ -30,4 +27,3 @@ class WorkerView(generic.TemplateView):
         table = {Day._meta.get_field(h).verbose_name: [getattr(d, h) for d in days] for h in hours}
         context["table"] = table
         return context
-
