@@ -1,7 +1,24 @@
+import datetime
+
 from django.views import generic
 
 from .models import Worker, Day
 from django.db.models import Q
+
+WEEKDAYS = {
+    0: "Пн",
+    1: "Вт",
+    2: "Ср",
+    3: "Чт",
+    4: "Пт",
+    5: "Сб",
+    6: "Вск",
+}
+
+
+def get_pretty_date():
+    now = datetime.datetime.now()
+    return f'{now.strftime("%d.%m.%Y")} {WEEKDAYS[now.weekday()]}'
 
 
 class TemplateDay:
@@ -39,6 +56,8 @@ class IndexView(generic.TemplateView):
         context = super().get_context_data(**kwargs)
         q = self.request.GET.get('q', '')
         context['workers_list'] = Worker.objects.filter(Q(first_name__icontains=q) | Q(last_name__icontains=q))
+
+        context["date"] = get_pretty_date()
         return context
 
 
@@ -54,6 +73,8 @@ class WorkerView(generic.TemplateView):
         # Day._meta.get_field(h).verbose_name - взять атрибут verbose_name
         table = {Day._meta.get_field(h).verbose_name: self.construct_hours(days, h) for h in hours}
         context["table"] = table
+
+        context["date"] = get_pretty_date()
         return context
 
     def construct_hours(self, days, hour_attr):
@@ -75,5 +96,3 @@ class WorkerView(generic.TemplateView):
                         else:
                             d.even = getattr(day, hour_attr)
         return map(lambda x: str(x), days_templte)
-
-
