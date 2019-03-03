@@ -5,7 +5,7 @@
     <table class="table">
         <thead class="thead-dark">
         <tr>
-            <th class="text-center" scope="col"> </th>
+            <th class="text-center" scope="col"></th>
             {% for day in object.day_set.all %}
                 <th scope="col" class="text-center">{{ day.get_weekday_display }}</th>
             {% endfor %}
@@ -17,9 +17,7 @@
                 <th class="text-center" scope="row">{{ name }}</th>
                 {% for day in  hour %}
                     <td class="text-center">
-                        {% if day %}
-                            +
-                        {% endif %}
+                        {{ day }}
                     </td>
                 {% endfor %}
             </tr>
