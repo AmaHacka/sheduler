@@ -15,6 +15,8 @@ WEEKDAYS = {
     6: "Вск",
 }
 
+DISPLAY_DAYS = ["Понедельник", "Вторинк", "Среда", "Четверг", "Пятница"]
+
 
 def get_pretty_date():
     now = datetime.datetime.now()
@@ -73,7 +75,7 @@ class WorkerView(generic.TemplateView):
         # Day._meta.get_field(h).verbose_name - взять атрибут verbose_name
         table = {Day._meta.get_field(h).verbose_name: self.construct_hours(days, h) for h in hours}
         context["table"] = table
-
+        context["display_days"] = DISPLAY_DAYS
         context["date"] = get_pretty_date()
         return context
 
@@ -82,6 +84,7 @@ class WorkerView(generic.TemplateView):
         for day in days:
             t_day = TemplateDay(day.weekday)
             if t_day not in days_templte:
+                t_day.split = day.split
                 if day.odd:
                     t_day.odd = getattr(day, hour_attr)
                 else:
@@ -90,7 +93,7 @@ class WorkerView(generic.TemplateView):
             else:
                 for d in days_templte:
                     if d == t_day:
-                        d.split = True
+                        # d.split = True
                         if day.odd:
                             d.odd = getattr(day, hour_attr)
                         else:

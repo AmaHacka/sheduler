@@ -6,8 +6,8 @@
         <thead class="thead-dark">
         <tr>
             <th class="text-center" scope="col"></th>
-            {% for day in object.day_set.all %}
-                <th scope="col" class="text-center">{{ day.get_weekday_display }}</th>
+            {% for day in display_days %}
+                <th scope="col" class="text-center">{{ day }}</th>
             {% endfor %}
         </tr>
         </thead>

@@ -22,6 +22,7 @@ class Day(models.Model):
     weekday = models.IntegerField(
         choices=WEEKDAYS,
     )
+    split = models.BooleanField(default=False, verbose_name="Разделить")
     odd = models.BooleanField(default=False, verbose_name="Нечетная")
 
     h8_9 = models.BooleanField(default=False, verbose_name="8-9")
