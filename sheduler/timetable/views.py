@@ -15,12 +15,20 @@ WEEKDAYS = {
     6: "Вск",
 }
 
-DISPLAY_DAYS = ["Понедельник", "Вторинк", "Среда", "Четверг", "Пятница"]
+DISPLAY_DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница"]
 
 
 def get_pretty_date():
     now = datetime.datetime.now()
-    return f'{now.strftime("%d.%m.%Y")} {WEEKDAYS[now.weekday()]}'
+    return f'{now.strftime("%d.%m.%Y")} {WEEKDAYS[now.weekday()]} ({get_weektype()})'
+
+
+def get_weektype():
+    now_week = datetime.datetime.now().isocalendar()[1]
+    if now_week % 2:
+        return "Нечетная"
+    else:
+        return "Четная"
 
 
 class TemplateDay:
@@ -57,7 +65,8 @@ class IndexView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         q = self.request.GET.get('q', '')
-        context['workers_list'] = Worker.objects.filter(Q(first_name__icontains=q) | Q(last_name__icontains=q))
+        context['workers_list'] = Worker.objects.filter(
+            Q(first_name__icontains=q) | Q(last_name__icontains=q)).order_by("last_name")
 
         context["date"] = get_pretty_date()
         return context
