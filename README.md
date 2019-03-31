@@ -17,9 +17,9 @@ Employee schedule management system.
 2. docker run -p 80:80 sheduler
 
 ### Examples:
-
+Index page
 ![index](https://raw.githubusercontent.com/AmaHacka/sheduler/master/screenshots/index.png)
-
+Worker details
 ![worker](https://raw.githubusercontent.com/AmaHacka/sheduler/master/screenshots/worker.png)
-
+Worker config in admin panel
 ![admin](https://raw.githubusercontent.com/AmaHacka/sheduler/master/screenshots/admin.png)
