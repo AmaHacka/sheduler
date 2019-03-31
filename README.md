@@ -9,10 +9,11 @@ Employee schedule management system.
 ### Stack:
 * Python 3.7
 * Django 2.1.7
+* Bootstrap 4
 * SqLite (or something for Django if you want)
 
 ### How to run:
-0. Create superuser by: ptython manage.py createsuperuser
+0. Create superuser by: python manage.py createsuperuser
 1. docker build . -t sheduler
 2. docker run -p 80:80 sheduler
 
