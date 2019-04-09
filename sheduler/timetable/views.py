@@ -1,9 +1,10 @@
 import datetime
+import pytz
 
+from django.db.models import Q
 from django.views import generic
 
 from .models import Worker, Day
-from django.db.models import Q
 
 WEEKDAYS = {
     0: "Пн",
@@ -16,10 +17,13 @@ WEEKDAYS = {
 }
 
 DISPLAY_DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница"]
+TIMEZONE = "Europe/Moscow"
+MAXIMUM_HOUR = 21
+WEEKDAYS_OFFSET = 1
 
 
 def get_pretty_date():
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(pytz.timezone(TIMEZONE))
     return f'{now.strftime("%d.%m.%Y")} {WEEKDAYS[now.weekday()]} ({get_weektype()})'
 
 
@@ -61,14 +65,34 @@ class TemplateDay:
 
 class IndexView(generic.TemplateView):
     template_name = "timetable/index.html"
+    timezone = pytz.timezone(TIMEZONE)
+
+    def check_worker_online(self, worker):
+        now_time = datetime.datetime.now(self.timezone)
+        now_weekday = now_time.weekday() + WEEKDAYS_OFFSET
+        now_week = now_time.isocalendar()[1] % 2
+        now_hour = now_time.hour
+        check_days = Worker.objects.get(pk=worker.pk).day_set.filter(weekday=now_weekday)
+        if len(check_days) >= 2:
+            if now_week:
+                week_attribute = "odd"
+            else:
+                week_attribute = "even"
+            check_days = list(filter(lambda x: getattr(x, week_attribute), check_days))
+        now_day = check_days[0]
+
+        if now_hour >= MAXIMUM_HOUR:
+            return False
+        return getattr(now_day, f"h{now_hour}_{now_hour + 1}")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         q = self.request.GET.get('q', '')
-        context['workers_list'] = Worker.objects.filter(
+        workers = Worker.objects.filter(
             Q(first_name__icontains=q) | Q(last_name__icontains=q)).order_by("last_name")
 
         context["date"] = get_pretty_date()
+        context['workers_list'] = [(worker, self.check_worker_online(worker)) for worker in workers]
         return context
 
 

@@ -1,13 +1,22 @@
 {% extends 'timetable/base.html' %}
+{% load staticfiles %}
 
 {% block title %} Расписание {% endblock %}
 
 {% block content %}
     {% if workers_list %}
         <ul class="list-group list-group-flush">
-            {% for worker in workers_list %}
-                <li class="list-group-item">
-                    <a href="/{{ worker.id }}/">{{ worker.last_name }} {{ worker.first_name }}</a>
+            {% for worker, online in workers_list %}
+                <li class="list-group-item list-group-item-action">
+                    {% if online %}
+                        <img class="online-status" src="{% static 'timetable/img/green-circle-button.png' %}"
+                             alt="online">
+                    {% else %}
+                        <img class="online-status" src="{% static 'timetable/img/red-circle-button.png' %}"
+                             alt="offline">
+                    {% endif %}
+                    <a class="ml-4" href="/{{ worker.id }}/">{{ worker.last_name }} {{ worker.first_name }}</a>
+
                 </li>
             {% endfor %}
         </ul>
