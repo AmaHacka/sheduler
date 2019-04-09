@@ -17,6 +17,11 @@ Employee schedule management system.
 1. docker build . -t sheduler
 2. docker run -p 80:80 sheduler
 
+Disable debug in settings and configure allowed hosts.
+
+WARNING: You shouldn't use this service with build-in http server. There just code and brief example how
+to run in quickly. Configure web-server and database.  
+
 ### Examples:
 Index page
 ![index](https://raw.githubusercontent.com/AmaHacka/sheduler/master/screenshots/index.png)
