@@ -74,11 +74,7 @@ class IndexView(generic.TemplateView):
         now_hour = now_time.hour
         check_days = Worker.objects.get(pk=worker.pk).day_set.filter(weekday=now_weekday)
         if len(check_days) >= 2:
-            if now_week:
-                week_attribute = "odd"
-            else:
-                week_attribute = "even"
-            check_days = list(filter(lambda x: getattr(x, week_attribute), check_days))
+            check_days = list(filter(lambda x: getattr(x, "odd") == now_week, check_days))
         now_day = check_days[0]
 
         if now_hour >= MAXIMUM_HOUR:

@@ -40,3 +40,6 @@ class Day(models.Model):
     h20_21 = models.BooleanField(default=False, verbose_name="20-21")
 
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
+
+class Holiday(models.Model):
+    pass
