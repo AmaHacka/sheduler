@@ -73,12 +73,14 @@ class IndexView(generic.TemplateView):
         now_week = now_time.isocalendar()[1] % 2
         now_hour = now_time.hour
         check_days = Worker.objects.get(pk=worker.pk).day_set.filter(weekday=now_weekday)
-        if len(check_days) >= 2:
-            check_days = list(filter(lambda x: getattr(x, "odd") == now_week, check_days))
-        now_day = check_days[0]
 
-        if now_hour >= MAXIMUM_HOUR:
+        if len(check_days) >= 2 or check_days[0].split:
+            check_days = list(filter(lambda x: int(x.odd) == now_week, check_days))
+
+        if now_hour >= MAXIMUM_HOUR or not check_days:
             return False
+
+        now_day = check_days[0]
         return getattr(now_day, f"h{now_hour}_{now_hour + 1}")
 
     def get_context_data(self, **kwargs):

@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 
 sheduler/db.sqlite3
+sheduler/sheduler/settings.py
