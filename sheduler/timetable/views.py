@@ -1,6 +1,6 @@
 import datetime
-
 import pytz
+
 from django.db.models import Q
 from django.views import generic
 
@@ -24,8 +24,7 @@ WEEKDAYS_OFFSET = 1
 
 def get_pretty_date():
     now = datetime.datetime.now(pytz.timezone(TIMEZONE))
-    return f'{now.strftime("%d.%m.%Y")} ' \
-           f'{WEEKDAYS[now.weekday()]} ({get_weektype()})'
+    return f'{now.strftime("%d.%m.%Y")} {WEEKDAYS[now.weekday()]} ({get_weektype()})'
 
 
 def get_weektype():
@@ -61,8 +60,7 @@ class TemplateDay:
         return " "
 
     def __repr__(self):
-        return f"<TemplateDay object {self.name} odd: {self.odd} " \
-               f"even: {self.even}> split: {self.split}"
+        return f"<TemplateDay object {self.name} odd: {self.odd} even: {self.even}> split: {self.split}"
 
 
 class IndexView(generic.TemplateView):
@@ -74,29 +72,23 @@ class IndexView(generic.TemplateView):
         now_weekday = now_time.weekday() + WEEKDAYS_OFFSET
         now_week = now_time.isocalendar()[1] % 2
         now_hour = now_time.hour
-        check_days = Worker.objects.get(pk=worker.pk).day_set.filter(
-            weekday=now_weekday)
-
-        if len(check_days) >= 2 or check_days[0].split:
-            check_days = list(
-                filter(lambda x: int(x.odd) == now_week, check_days))
-
-        if now_hour >= MAXIMUM_HOUR or not check_days:
-            return False
-
+        check_days = Worker.objects.get(pk=worker.pk).day_set.filter(weekday=now_weekday)
+        if len(check_days) >= 2:
+            check_days = list(filter(lambda x: getattr(x, "odd") == now_week, check_days))
         now_day = check_days[0]
+
+        if now_hour >= MAXIMUM_HOUR:
+            return False
         return getattr(now_day, f"h{now_hour}_{now_hour + 1}")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         q = self.request.GET.get('q', '')
         workers = Worker.objects.filter(
-            Q(first_name__icontains=q) | Q(last_name__icontains=q)).order_by(
-            "last_name")
+            Q(first_name__icontains=q) | Q(last_name__icontains=q)).order_by("last_name")
 
         context["date"] = get_pretty_date()
-        context['workers_list'] = [(worker, self.check_worker_online(worker))
-                                   for worker in workers]
+        context['workers_list'] = [(worker, self.check_worker_online(worker)) for worker in workers]
         return context
 
 
@@ -110,31 +102,29 @@ class WorkerView(generic.TemplateView):
         hours = [a for a in Day.__dict__.keys() if a.startswith("h")]
         # В стоках - часы работы, в столбцах - дни
         # Day._meta.get_field(h).verbose_name - взять атрибут verbose_name
-        table = {
-            Day._meta.get_field(h).verbose_name: self.construct_hours(days, h)
-            for h in hours
-        }
+        table = {Day._meta.get_field(h).verbose_name: self.construct_hours(days, h) for h in hours}
         context["table"] = table
         context["display_days"] = DISPLAY_DAYS
         context["date"] = get_pretty_date()
         return context
 
     def construct_hours(self, days, hour_attr):
-
-        def set_odd_or_even(template_day, real_day):
-            if real_day.odd:
-                template_day.odd = getattr(real_day, hour_attr)
-            else:
-                template_day.even = getattr(real_day, hour_attr)
-
         days_templte = []
         for day in days:
             t_day = TemplateDay(day.weekday)
             if t_day not in days_templte:
                 t_day.split = day.split
-                set_odd_or_even(t_day, day)
+                if day.odd:
+                    t_day.odd = getattr(day, hour_attr)
+                else:
+                    t_day.even = getattr(day, hour_attr)
+                days_templte.append(t_day)
             else:
                 for d in days_templte:
                     if d == t_day:
-                        set_odd_or_even(d, day)
+                        # d.split = True
+                        if day.odd:
+                            d.odd = getattr(day, hour_attr)
+                        else:
+                            d.even = getattr(day, hour_attr)
         return map(lambda x: str(x), days_templte)
