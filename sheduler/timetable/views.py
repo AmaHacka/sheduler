@@ -1,5 +1,6 @@
 import datetime
 import pytz
+from typing import List, Iterator, Tuple
 
 from django.db.models import Q
 from django.views import generic
@@ -22,12 +23,12 @@ MAXIMUM_HOUR = 21
 WEEKDAYS_OFFSET = 1
 
 
-def get_pretty_date():
+def get_pretty_date() -> str:
     now = datetime.datetime.now(pytz.timezone(TIMEZONE))
     return f'{now.strftime("%d.%m.%Y")} {WEEKDAYS[now.weekday()]} ({get_weektype()})'
 
 
-def get_weektype():
+def get_weektype() -> str:
     now_week = datetime.datetime.now().isocalendar()[1]
     if now_week % 2:
         return "Нечетная"
@@ -67,7 +68,7 @@ class IndexView(generic.TemplateView):
     template_name = "timetable/index.html"
     timezone = pytz.timezone(TIMEZONE)
 
-    def check_worker_online(self, worker):
+    def check_worker_online(self, worker: Worker) -> bool:
         now_time = datetime.datetime.now(self.timezone)
         now_weekday = now_time.weekday() + WEEKDAYS_OFFSET
         now_week = now_time.isocalendar()[1] % 2
@@ -106,9 +107,13 @@ class WorkerView(generic.TemplateView):
         context["table"] = table
         context["display_days"] = DISPLAY_DAYS
         context["date"] = get_pretty_date()
+        sum_hours = self.sum_hours(days)
+        context["hours_sum"] = sum_hours
+        context["hours_average"] = (sum_hours[0] + sum_hours[1]) / 2
         return context
 
-    def construct_hours(self, days, hour_attr):
+    @staticmethod
+    def construct_hours(days: List[Day], hour_attr: str) -> Iterator[str]:
         days_templte = []
         for day in days:
             t_day = TemplateDay(day.weekday)
@@ -128,3 +133,24 @@ class WorkerView(generic.TemplateView):
                         else:
                             d.even = getattr(day, hour_attr)
         return map(lambda x: str(x), days_templte)
+
+    @staticmethod
+    def sum_hours(days: List[Day]) -> Tuple[int, int]:
+        odd_sum = 0
+        even_sum = 0
+        for day in days:
+            hours = [value for key, value in day.__dict__.items() if key.startswith("h")]
+            for hour in hours:
+                if day.split:
+                    if day.odd and hour:
+                        odd_sum += 1
+                    elif not day.odd and hour:
+                        even_sum += 1
+                elif hour:
+                    odd_sum += 1
+                    even_sum += 1
+        return odd_sum, even_sum
+
+
+
+

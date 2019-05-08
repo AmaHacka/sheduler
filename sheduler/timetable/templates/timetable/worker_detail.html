@@ -26,5 +26,14 @@
         </tbody>
     </table>
 
+    <div class="text-center">
+    {% if hours_sum.0 == hours_sum.1 %}
+        Суммарно часов: {{ hours_sum.0 }}
+    {% else %}
+        Нечетная неделя: {{ hours_sum.0 }}<br>
+        Четная неделя: {{ hours_sum.1 }}<br>
+        В среднем: {{ hours_average }}
+    {% endif %}
+    </div>
 
 {% endblock %}
