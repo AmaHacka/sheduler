@@ -41,5 +41,10 @@ class Day(models.Model):
 
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
 
+
 class Holiday(models.Model):
-    pass
+    date_start = models.DateField(verbose_name="Начало отпуска")
+    date_end = models.DateField(verbose_name="Конец отпуска")
+    worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
+
+

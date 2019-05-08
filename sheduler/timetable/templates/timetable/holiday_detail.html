@@ -1,0 +1,19 @@
+{% extends "timetable/base.html" %}
+{% block title %} {{ object.last_name }} {{ object.first_name }}{% endblock %}
+
+{% block content %}
+
+
+    {% for len, holiday in holidays %}
+        <div class="alert alert-success">
+            Завершен: {{ holiday.date_start }} - {{ holiday.date_end }}
+            ({{ len }} дней)
+        </div>
+    {% endfor %}
+
+    <br>
+    <div class="alert alert-warning">
+        Осталось <b>15</b> дней отпуска
+    </div>
+
+{% endblock %}

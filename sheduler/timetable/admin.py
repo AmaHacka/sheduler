@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Worker, Day
+from .models import Worker, Day, Holiday
 
 
 class DayInline(admin.TabularInline):
@@ -14,8 +14,16 @@ class DayInline(admin.TabularInline):
         return extra
 
 
+class HolidayInline(admin.StackedInline):
+    model = Holiday
+
+    def get_extra(self, request, obj=None, **kwargs):
+        extra = 1
+        return extra
+
+
 class WorkerAdmin(admin.ModelAdmin):
-    inlines = [DayInline]
+    inlines = [DayInline, HolidayInline]
 
 
 admin.site.register(Worker, WorkerAdmin)

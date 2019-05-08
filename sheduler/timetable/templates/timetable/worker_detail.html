@@ -27,13 +27,21 @@
     </table>
 
     <div class="text-center">
-    {% if hours_sum.0 == hours_sum.1 %}
-        Суммарно часов: {{ hours_sum.0 }}
-    {% else %}
-        Нечетная неделя: {{ hours_sum.0 }}<br>
-        Четная неделя: {{ hours_sum.1 }}<br>
-        В среднем: {{ hours_average }}
-    {% endif %}
+        <ul class="list-group">
+            <li class="list-group-item">
+                {% if hours_sum.0 == hours_sum.1 %}
+                    Суммарно часов: {{ hours_sum.0 }}
+                {% else %}
+                    Нечетная неделя: {{ hours_sum.0 }}<br>
+                    Четная неделя: {{ hours_sum.1 }}<br>
+                    В среднем: {{ hours_average }}
+                {% endif %}
+            </li>
+            <li class="list-group-item">
+                <a href="/{{ object.id }}/holiday">Отпуска</a>
+            </li>
+        </ul>
+
     </div>
 
 {% endblock %}

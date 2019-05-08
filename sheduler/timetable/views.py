@@ -1,7 +1,7 @@
 import datetime
-import pytz
 from typing import List, Iterator, Tuple
 
+import pytz
 from django.db.models import Q
 from django.views import generic
 
@@ -61,7 +61,8 @@ class TemplateDay:
         return " "
 
     def __repr__(self):
-        return f"<TemplateDay object {self.name} odd: {self.odd} even: {self.even}> split: {self.split}"
+        return f"<TemplateDay object {self.name} odd: {self.odd}" \
+               f" even: {self.even}> split: {self.split}"
 
 
 class IndexView(generic.TemplateView):
@@ -73,9 +74,11 @@ class IndexView(generic.TemplateView):
         now_weekday = now_time.weekday() + WEEKDAYS_OFFSET
         now_week = now_time.isocalendar()[1] % 2
         now_hour = now_time.hour
-        check_days = Worker.objects.get(pk=worker.pk).day_set.filter(weekday=now_weekday)
+        check_days = Worker.objects.get(pk=worker.pk).day_set.filter(
+            weekday=now_weekday)
         if len(check_days) >= 2:
-            check_days = list(filter(lambda x: getattr(x, "odd") == now_week, check_days))
+            check_days = list(
+                filter(lambda x: getattr(x, "odd") == now_week, check_days))
         now_day = check_days[0]
 
         if now_hour >= MAXIMUM_HOUR:
@@ -86,10 +89,12 @@ class IndexView(generic.TemplateView):
         context = super().get_context_data(**kwargs)
         q = self.request.GET.get('q', '')
         workers = Worker.objects.filter(
-            Q(first_name__icontains=q) | Q(last_name__icontains=q)).order_by("last_name")
+            Q(first_name__icontains=q) | Q(last_name__icontains=q)).order_by(
+            "last_name")
 
         context["date"] = get_pretty_date()
-        context['workers_list'] = [(worker, self.check_worker_online(worker)) for worker in workers]
+        context['workers_list'] = [(worker, self.check_worker_online(worker))
+                                   for worker in workers]
         return context
 
 
@@ -98,12 +103,15 @@ class WorkerView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object'] = Worker.objects.get(pk=self.kwargs['pk'])
-        days = Worker.objects.get(pk=self.kwargs['pk']).day_set.all()
+        worker = Worker.objects.get(pk=self.kwargs['pk'])
+        context['object'] = worker
+        days = worker.day_set.all()
         hours = [a for a in Day.__dict__.keys() if a.startswith("h")]
         # В стоках - часы работы, в столбцах - дни
         # Day._meta.get_field(h).verbose_name - взять атрибут verbose_name
-        table = {Day._meta.get_field(h).verbose_name: self.construct_hours(days, h) for h in hours}
+        table = {
+        Day._meta.get_field(h).verbose_name: self.construct_hours(days, h) for h
+        in hours}
         context["table"] = table
         context["display_days"] = DISPLAY_DAYS
         context["date"] = get_pretty_date()
@@ -139,7 +147,8 @@ class WorkerView(generic.TemplateView):
         odd_sum = 0
         even_sum = 0
         for day in days:
-            hours = [value for key, value in day.__dict__.items() if key.startswith("h")]
+            hours = [value for key, value in day.__dict__.items() if
+                     key.startswith("h")]
             for hour in hours:
                 if day.split:
                     if day.odd and hour:
@@ -152,5 +161,17 @@ class WorkerView(generic.TemplateView):
         return odd_sum, even_sum
 
 
+class WorkerHolidayView(generic.TemplateView):
+    template_name = "timetable/holiday_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        holidays = Worker.objects.get(pk=self.kwargs['pk']).holiday_set.all()
+        context["holidays"] = map(self.construct_holiday, holidays)
+        return context
 
+    @staticmethod
+    def construct_holiday(holiday):
+        delta_holiday = holiday.date_end - holiday.date_start
+        length = delta_holiday.days
+        return length, holiday
