@@ -110,8 +110,9 @@ class WorkerView(generic.TemplateView):
         # В стоках - часы работы, в столбцах - дни
         # Day._meta.get_field(h).verbose_name - взять атрибут verbose_name
         table = {
-        Day._meta.get_field(h).verbose_name: self.construct_hours(days, h) for h
-        in hours}
+            Day._meta.get_field(h).verbose_name: self.construct_hours(days, h)
+            for h
+            in hours}
         context["table"] = table
         context["display_days"] = DISPLAY_DAYS
         context["date"] = get_pretty_date()
@@ -163,15 +164,29 @@ class WorkerView(generic.TemplateView):
 
 class WorkerHolidayView(generic.TemplateView):
     template_name = "timetable/holiday_detail.html"
+    holidays_count = 28
+    now = datetime.datetime.now()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         holidays = Worker.objects.get(pk=self.kwargs['pk']).holiday_set.all()
-        context["holidays"] = map(self.construct_holiday, holidays)
+        this_year_holidays = filter(self.filter_year, holidays)
+        context["holidays"] = list(
+            map(self.construct_holiday, this_year_holidays))
+        left_free_days = self.holidays_count
+        for holiday in context["holidays"]:
+            left_free_days -= holiday[0]
+        context["days_left"] = left_free_days
         return context
 
     @staticmethod
     def construct_holiday(holiday):
         delta_holiday = holiday.date_end - holiday.date_start
-        length = delta_holiday.days
+        length = delta_holiday.days + 1
         return length, holiday
+
+    def filter_year(self, holiday):
+        if self.now.year == holiday.date_start.year:
+            return True
+        else:
+            return False
