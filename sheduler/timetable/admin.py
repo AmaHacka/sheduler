@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Worker, Day, Holiday
+from .models import Worker, Day, Holiday, Department
 
 
 class DayInline(admin.TabularInline):
@@ -27,4 +27,4 @@ class WorkerAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Worker, WorkerAdmin)
-admin.site.register(Day)
+admin.site.register(Department)

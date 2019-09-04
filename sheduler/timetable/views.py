@@ -5,7 +5,7 @@ import pytz
 from django.db.models import Q
 from django.views import generic
 
-from .models import Worker, Day
+from .models import Worker, Day, Department
 
 WEEKDAYS = {
     0: "Пн",
@@ -93,6 +93,25 @@ class IndexView(generic.TemplateView):
             "last_name")
 
         context["date"] = get_pretty_date()
+        context["departments"] = Department.objects.all()
+        context['workers_list'] = [(worker, self.check_worker_online(worker))
+                                   for worker in workers]
+        return context
+
+
+class DepartmentView(IndexView):
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs['pk']
+        q = self.request.GET.get('q', '')
+        workers = Worker.objects.filter(
+            (Q(first_name__icontains=q) | Q(last_name__icontains=q)) &
+            Q(department__id=pk)
+        ).order_by("last_name")
+
+        context["date"] = get_pretty_date()
+        context["departments"] = Department.objects.all()
         context['workers_list'] = [(worker, self.check_worker_online(worker))
                                    for worker in workers]
         return context

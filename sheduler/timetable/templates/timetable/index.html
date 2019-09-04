@@ -4,18 +4,32 @@
 {% block title %} Расписание {% endblock %}
 
 {% block content %}
+
+    {% if departments %}
+        <ul class="nav justify-content-center mb-4">
+            {% for department in departments %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/department/{{ department.id }}">{{ department.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     {% if workers_list %}
         <ul class="list-group list-group-flush">
             {% for worker, online in workers_list %}
                 <li class="list-group-item list-group-item-action">
                     {% if online %}
-                        <img class="online-status" src="{% static 'timetable/img/green-circle-button.png' %}"
+                        <img class="online-status"
+                             src="{% static 'timetable/img/green-circle-button.png' %}"
                              alt="online">
                     {% else %}
-                        <img class="online-status" src="{% static 'timetable/img/red-circle-button.png' %}"
+                        <img class="online-status"
+                             src="{% static 'timetable/img/red-circle-button.png' %}"
                              alt="offline">
                     {% endif %}
-                    <a class="ml-4" href="/{{ worker.id }}/">{{ worker.last_name }} {{ worker.first_name }}</a>
+                    <a class="ml-4"
+                       href="worker/{{ worker.id }}/">{{ worker.last_name }} {{ worker.first_name }}</a>
 
                 </li>
             {% endfor %}

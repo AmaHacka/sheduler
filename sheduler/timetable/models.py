@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 WEEKDAYS = [
     (1, "Понедельник"),
@@ -9,10 +10,19 @@ WEEKDAYS = [
 ]
 
 
+class Department(models.Model):
+    owner = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f"{self.owner}'s {self.name}"
+
+
 class Worker(models.Model):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
     full_day = models.BooleanField(default=False)
+    department = models.ForeignKey(Department, on_delete=models.DO_NOTHING, default=None)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -47,4 +57,5 @@ class Holiday(models.Model):
     date_end = models.DateField(verbose_name="Конец отпуска")
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
 
-
+    def __str__(self):
+        return f"{self.date_start} - {self.date_end}"
