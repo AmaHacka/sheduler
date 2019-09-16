@@ -1,5 +1,6 @@
 import datetime
 from typing import List, Iterator, Tuple
+from collections import OrderedDict
 
 import pytz
 from django.db.models import Q
@@ -124,6 +125,8 @@ class WorkerView(generic.TemplateView):
     @staticmethod
     def construct_hours(days: List[Day], hour_attr: str) -> Iterator[str]:
         days_templte = []
+        days = list(days)
+        days.sort(key=lambda x: x.weekday)
         for day in days:
             t_day = TemplateDay(day.weekday)
             if t_day not in days_templte:
