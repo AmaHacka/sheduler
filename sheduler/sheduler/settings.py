@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1vrofxmsfnqyrcusffy2zjdyintepifoydyxcmupemepbjqxzpveh3vydjendic4'
+SECRET_KEY = 'SUPER-ZALYPER-KEY' # old key deprecated
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -73,12 +73,8 @@ WSGI_APPLICATION = 'sheduler.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sheduler',
-        'USER': 'sheduler',
-        'PASSWORD': 'sheduler12345',
-        'HOST': '10.22.10.100',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
