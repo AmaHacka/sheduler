@@ -1,9 +1,11 @@
 import datetime
+import random
 from typing import List, Iterator, Tuple
 from collections import OrderedDict
 
 import pytz
 from django.db.models import Q
+from django.http import JsonResponse
 from django.views import generic
 
 from .models import Worker, Day
@@ -80,7 +82,10 @@ class IndexView(generic.TemplateView):
         if len(check_days) >= 2:
             check_days = list(
                 filter(lambda x: getattr(x, "odd") == now_week, check_days))
-        now_day = check_days[0]
+        try:
+            now_day = check_days[0]
+        except IndexError:
+            return False
 
         if now_hour >= MAXIMUM_HOUR:
             return False
@@ -193,3 +198,17 @@ class WorkerHolidayView(generic.TemplateView):
             return True
         else:
             return False
+
+
+def sync_time(request):
+    exists = bool(random.getrandbits(1))
+    if exists:
+        count = random.randint(1, 5)
+    else:
+        count = 0
+    return JsonResponse(
+        {
+            "exists": exists,
+            "count": count,
+        }
+    )
