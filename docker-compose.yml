@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:latest
+    networks:
+      - sheduler_network
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - sheduler_data:/var/lib/postgresql/data
+
+  django:
+    build: .
+    networks:
+      - sheduler_network
+    ports:
+      - 8000:80
+    env_file:
+      - docker.env
+    depends_on:
+      - postgres
+
+volumes:
+  sheduler_data:
+
+networks:
+  sheduler_network:
+    driver: bridge

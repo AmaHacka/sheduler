@@ -105,3 +105,4 @@ venv.bak/
 
 sheduler/db.sqlite3
 .idea/
+docker.env
